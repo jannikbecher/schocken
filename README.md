@@ -1,6 +1,6 @@
 # Schocken
-
-**TODO: Add description**
+Schocken is a simple dice game played mostly in pubs.
+[Rules](https://de.wikipedia.org/wiki/Schocken)
 
 ## Installation
 
