@@ -1,0 +1,11 @@
+* Organizing stuff:
+  Here is a simple UML sequence diagram to illustrate the flow
+  
+  #+begin_src plantuml :file test.png
+    @startuml
+    actor player
+    control game
+    player -> game : start_link 
+    player <- game : {:game_state}
+    @enduml
+  #+end_src
