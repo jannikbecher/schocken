@@ -27,8 +27,12 @@ defmodule Schocken.Game do
   @doc """
   Returns a new game state
   """
-  def new_game(number_players) do
-    %Schocken.Game{}
+  @spec new(integer) :: t
+  def new(number_players) do
+    players = Enum.reduce(1..number_players, [], fn id, players ->
+      [Player.new("player_" <> to_string(id)) | players]
+    end)
+    %game{active_players: players}
   end
 
 end

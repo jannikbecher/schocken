@@ -30,9 +30,8 @@ defmodule Schocken.Game.Player do
   Returns a new player struct
   """
   def new(name) do
-    %Player{
-      name: name,
-    }
+    %Player{name: name}
+    |> roll_dices(:all)
   end
 
   @doc """
