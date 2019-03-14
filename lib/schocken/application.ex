@@ -5,6 +5,7 @@ defmodule Schocken.Application do
 
   def start(_type, _args) do
     children = [
+      {Schocken.Server, 3}
     ]
 
     opts = [strategy: :one_for_one, name: Schocken.Supervisor]

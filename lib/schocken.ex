@@ -4,15 +4,10 @@ defmodule Schocken do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Schocken.hello()
-      :world
-
+  Starting a new supervisor and returning the pid
   """
-  def hello do
-    :world
+  def new_game do
+    {:ok, pid} = Supervisor.start_child(Schocken.Supervisor, [])
+    pid
   end
 end

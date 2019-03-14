@@ -35,4 +35,11 @@ defmodule Schocken.Game do
     %Game{active_players: players}
   end
 
+  @doc """
+  Returns the allowed seen state of the game
+  """
+  def game_status(game) do
+    %{}
+  end
+
 end
