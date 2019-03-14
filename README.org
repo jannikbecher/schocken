@@ -69,3 +69,7 @@
 game = new_game(number_players, rules)
 {game, possible_actions} = make_move(game, player, action)
 {:ok, game} = game_status(game)
+
+* Actions
+** roll_dices
+** finish_move
