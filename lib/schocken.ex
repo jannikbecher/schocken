@@ -17,4 +17,8 @@ defmodule Schocken do
   def status(game_pid) do
     GenServer.call(game_pid, {:status})
   end
+
+  def make_move(game_pid, action, params \\ []) do
+    GenServer.call(game_pid, {:make_move, action, params})
+  end
 end

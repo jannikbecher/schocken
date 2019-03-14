@@ -36,10 +36,25 @@ defmodule Schocken.Game do
   end
 
   @doc """
-  Returns the allowed seen state of the game
+  Making a new move.
+
+  :finish to end the move
+  :toss to toss selcted dices
   """
-  def game_status(game) do
-    %{}
+  @spec make_move(t, atom, term) :: t
+  def make_move(game, action, params)
+
+  def make_move(game = %Game{}, :finish, _) do
+    [player | active_players] = game.active_players
+    %Game{game |
+          active_players: active_players,
+          waiting_players: game.waiting_players ++ [player]
+    }
   end
 
+  def make_move(game = %Game{active_players: [active_player | rest_players]}, :toss, choices) do
+    %Game{game |
+          active_players: [Player.roll_dices(active_player, choices) | rest_players]
+    }
+  end
 end
