@@ -15,9 +15,16 @@ defmodule Schocken.Game.Ranking do
   """
   @spec evaluate(Player.current_toss) :: Player.current_toss
   def evaluate(current_toss = %{dices: dices, one_toss: one_toss, tries: tries}) do
-    dices |> Enum.sort(&(&1 >= &2)) |> eval(one_toss)
-    |> Tuple.append(tries)
+    score =
+      dices
+      |> Enum.sort(&(&1 >= &2))
+      |> eval(one_toss)
+      |> Tuple.append(tries)
+    %{current_toss | score: score}
   end
+
+  @spec eval([Player.dice], boolean) :: Player.score
+  defp eval(dices, one_toss)
 
   defp eval([1, 1, 1], _), do: {@schock_out, 0}
 
@@ -25,7 +32,7 @@ defmodule Schocken.Game.Ranking do
 
   defp eval([s, s, s], _), do: {@general, s}
 
-  defp eval([a, b, c], true) when a - c == 2, do: {@straight, s}
+  defp eval([a, _, b], true) when a - b == 2, do: {@straight, a}
 
   defp eval(dices, _) do
     rank =

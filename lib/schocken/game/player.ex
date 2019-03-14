@@ -6,7 +6,7 @@ defmodule Schocken.Game.Player do
 
   defstruct(
     name: "",
-    current_toss: %{dices: nil, one_toss: nil, tries: 0, score: nil}
+    current_toss: %{dices: nil, one_toss: nil, tries: 0, score: nil},
     num_coaster: 0,
     lost_half: false
   )
@@ -19,11 +19,12 @@ defmodule Schocken.Game.Player do
   }
   @type dice :: 1..6
   @type tries :: 0..3
+  @type score :: {integer, integer, integer}
   @type current_toss :: %{
-    dices: [dice, dice, dice],
+    dices: [dice],
     one_toss: boolean,
     tries: tries,
-    score: {integer, integer, integer}
+    score: score
   }
 
   @doc """
@@ -46,23 +47,23 @@ defmodule Schocken.Game.Player do
       current_toss
       |> do_roll_dices(choices)
       |> update_tries()
-      |> Map.put(one_toss, false)
+      |> Map.put(:one_toss, false)
       |> Ranking.evaluate()
     %Player{player | current_toss: current_toss}
   end
 
-  @spec do_roll_dices(current_toss, List | :all | 1..6)
-  defp do_roll_dices(%{}, _choices)
+  @spec do_roll_dices(current_toss, List | :all | 1..6) :: current_toss
+  defp do_roll_dices(_current_toss, _choices)
 
-  defp do_roll_dices(current_toss = %{dices: dices}, choice) when is_number(choice) do
-    reroll_dice(current_toss)
+  defp do_roll_dices(current_toss, choice) when is_number(choice) do
+    reroll_dice(current_toss, choice)
   end
 
-  defp do_roll_dices(current_toss = %{dices: dices}, :all) do
-    {current_toss | dices: [toss(), toss(), toss()]}
+  defp do_roll_dices(current_toss, :all) do
+    %{current_toss | dices: [toss(), toss(), toss()]}
   end
 
-  defp do_roll_dices(current_toss = %{dices: dices}, choices) do
+  defp do_roll_dices(current_toss, choices) do
     Enum.reduce(choices, current_toss, fn choice, toss ->
       reroll_dice(toss, choice)
     end)

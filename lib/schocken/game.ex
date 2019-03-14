@@ -32,7 +32,7 @@ defmodule Schocken.Game do
     players = Enum.reduce(1..number_players, [], fn id, players ->
       [Player.new("player_" <> to_string(id)) | players]
     end)
-    %game{active_players: players}
+    %Game{active_players: players}
   end
 
 end
