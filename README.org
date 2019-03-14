@@ -1,11 +1,64 @@
 * Organizing stuff:
   Here is a simple UML sequence diagram to illustrate the flow
   
+  How to interact with the library
   #+begin_src plantuml :file test.png
     @startuml
     actor player
     control game
-    player -> game : start_link 
+    player -> table : join
+    player -> table : start_game
+    table -> game : start with players
     player <- game : {:game_state}
     @enduml
   #+end_src
+  
+** State
+   - active_players :: [player]
+     - name :: String.t
+     - dices :: Map
+     - num_coaster :: Int
+     - lost_half :: bool
+   - waiting_players :: [player]
+   - out_players :: [player]
+   - global_coaster :: Int
+   - tries :: Int
+   - current_state :: %{round: :first|:second|:finale, phase: :pre|:post}
+   
+*** player
+**** name
+     the id of the player
+**** dices
+     Map of the dices sorted upwards
+**** num_coaster
+     number of coasters
+**** lost_half
+     whether the player has lost already a half
+   
+*** active_players
+    List of players who still have to make a move
+   
+*** waiting_players
+    List of players who already moved, are still in the game and waiting for the oters to finish
+   
+*** out_players
+    List of players who haven't any coasters and there are no global_coaster left
+   
+*** global_coaster
+    state of the global coaster. Get initialized with 13
+   
+*** tries
+    first player decides how many tries you have for your turn (1-3)
+   
+*** current_state
+**** round
+     whether it is the first, second or finale
+**** phase
+     whether there are still coasters in the global_coaster stack (:pre)
+     or the finale (:post)
+   
+    
+* API
+game = new_game(number_players, rules)
+{game, possible_actions} = make_move(game, player, action)
+{:ok, game} = game_status(game)
