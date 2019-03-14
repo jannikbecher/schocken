@@ -70,7 +70,7 @@ defmodule Schocken.Game.Player do
   defp do_roll_dices(current_toss, choices) when length(choices) == 3 do
     do_roll_dices(current_toss, :all)
   end
-  
+
   defp do_roll_dices(current_toss, :all) do
     %{current_toss | dices: [toss(), toss(), toss()], one_toss: true}
   end
