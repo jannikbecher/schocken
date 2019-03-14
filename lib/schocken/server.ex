@@ -15,6 +15,12 @@ defmodule Schocken.Server do
   end
 
   def handle_call({:status}, _from, game) do
-    {:reply, game, game}
+    status = %{
+      current_player: List.first(game.active_players),
+      global_coaster: game.global_coaster,
+      tries: game.tries,
+      current_state: game.current_state
+    }
+    {:reply, status, game}
   end
 end
