@@ -19,6 +19,8 @@ defmodule Schocken.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+    ]
   end
 end
