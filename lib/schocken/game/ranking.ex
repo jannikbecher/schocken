@@ -32,7 +32,7 @@ defmodule Schocken.Game.Ranking do
 
   defp eval([s, s, s], _), do: {@general, s}
 
-  defp eval([a, _, b], true) when a - b == 2, do: {@straight, a}
+  defp eval([a, b, c], true) when a - c == 2 and a != b and b != c, do: {@straight, a}
 
   defp eval(dices, _) do
     rank =

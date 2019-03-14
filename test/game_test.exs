@@ -5,6 +5,5 @@ defmodule Schocken.GameTest do
 
   test "create new game" do
     game = Game.new(3)
-    IO.inspect game
   end
 end
