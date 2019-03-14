@@ -5,10 +5,9 @@ defmodule Schocken.Application do
 
   def start(_type, _args) do
     children = [
-      {Schocken.Server, 3}
+      {DynamicSupervisor, strategy: :one_for_one, name: Schocken.DynamicSupervisor}
     ]
 
-    opts = [strategy: :one_for_one, name: Schocken.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end

@@ -14,6 +14,7 @@ defmodule Schocken.Server do
     {:ok, Game.new(number_players)}
   end
 
-  def handle_call() do
+  def handle_call({:status}, _from, game) do
+    {:reply, game, game}
   end
 end
