@@ -16,7 +16,7 @@
 ** State
    - active_players :: [player]
      - name :: String.t
-     - dices :: Map
+     - current_toss :: %{dices => [], one_toss => boolean, tries => Int, score => {score, high}}
      - num_coaster :: Int
      - lost_half :: bool
    - waiting_players :: [player]
@@ -28,8 +28,15 @@
 *** player
 **** name
      the id of the player
-**** dices
-     Map of the dices sorted upwards
+**** current_toss
+***** dices
+      List of dices (saved as a tuple) and whether it was one throw (saved in one_shot)
+***** one_toss
+      whether it was in one throw
+***** tries
+      number of tries (0 to 3)
+***** score
+      the score of the last toss
 **** num_coaster
      number of coasters
 **** lost_half

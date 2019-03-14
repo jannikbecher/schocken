@@ -31,5 +31,4 @@ defmodule Schocken.Game do
     %Schocken.Game{}
   end
 
-  defp create_new_player()
 end
