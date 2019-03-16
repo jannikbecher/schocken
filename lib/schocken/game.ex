@@ -15,10 +15,10 @@ defmodule Schocken.Game do
   )
 
   @type t :: %Game{
-          players: [Player],
+          players: [Player.t],
           global_coaster: 0..13,
           tries: 1..3,
-          current_state: {:first_half | :second_half | :finale}
+          current_state: :first_half | :second_half | :finale
         }
 
   @doc """
