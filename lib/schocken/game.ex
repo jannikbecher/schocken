@@ -45,13 +45,15 @@ defmodule Schocken.Game do
 
   # Game is over
   def make_move(
-        %Game{players: [%Player{state: :finished} | _rest], current_state: :finale},
+        %Game{players: [_player, %Player{state: :finished} | _rest], current_state: :finale},
         []
       ) do
   end
 
   # Round is over
-  def make_move(%Game{players: [player = %Player{state: :finished} | rest] = game}, []) do
+  def make_move(%Game{players: [player, %Player{state: :finished} | _] = players} = game, []) do
+    player = %Player{player | state: :finished}
+    [_ | rest] = players
     %Game{game | players: rest ++ [player]}
     |> calculate_round()
   end
@@ -208,7 +210,7 @@ defmodule Schocken.Game do
     %Game{game | players: skip_players(game.players)}
   end
 
-  defp skip_players([player = %Player{state: :ready} | rest]), do: [player] ++ rest
+  defp skip_players([%Player{state: :ready} = player | rest]), do: [player] ++ rest
 
   defp skip_players([player | rest]) do
     skip_players(rest ++ [player])
