@@ -5,6 +5,7 @@ defmodule Schocken.Game do
 
   alias __MODULE__
   alias Schocken.Game.Player
+  alias Schocken.Game.Ranking
 
   defstruct(
     players: [],
@@ -44,7 +45,7 @@ defmodule Schocken.Game do
 
   # Game is over
   def make_move(
-        %Game{players: [%Player{state: :finished} = player | rest], current_state: :finale},
+        %Game{players: [%Player{state: :finished} | _rest], current_state: :finale},
         []
       ) do
   end
@@ -66,7 +67,7 @@ defmodule Schocken.Game do
     %Game{game | players: [Player.roll_dices(active_player, choices) | rest_players]}
   end
 
-  defp calculate_round(%Game{global_coaster: coaster} = game) do
+  defp calculate_round(%Game{} = game) do
     {best_player, type, number_of_coasters} = Ranking.highest_toss(game.players)
     worst_player = Ranking.lowest_toss(game.players)
 
@@ -76,8 +77,9 @@ defmodule Schocken.Game do
     end
   end
 
-  defp calculate_schock_out_round(%Game{players: []}, worst_player = game) do
-    players = game.waiting_players
+  defp calculate_schock_out_round(%Game{players: []} = game, _worst_player) do
+    # TODO implement this function
+    _players = game.waiting_players
   end
 
   defp calculate_normal_round(
@@ -133,7 +135,7 @@ defmodule Schocken.Game do
     players =
       game.players
       |> List.replace_at(worst_player_index, worst_player)
-      |> List.replauce_at(best_player_index, best_player)
+      |> List.replace_at(best_player_index, best_player)
 
     %Game{game | players: players}
   end
@@ -193,8 +195,7 @@ defmodule Schocken.Game do
   defp init_new_round(
          %Game{
            players: players,
-           current_state: :first_half,
-           global_coaster: global_coaster
+           current_state: :first_half
          } = game,
          lost_player_index
        ) do

@@ -31,7 +31,7 @@ defmodule Schocken.Game.Ranking do
       |> Enum.max_by(fn player -> player.current_toss.score end)
 
     index_best = Enum.find_index(players, fn player -> player.name == best_player.name end)
-    {type, number} = Ranking.calc_amount_of_coasters(best_player)
+    {type, number} = calc_amount_of_coasters(best_player)
 
     {{best_player, index_best}, type, number}
   end
