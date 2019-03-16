@@ -6,8 +6,16 @@ defmodule Schocken.Server do
   alias __MODULE__
   alias Schocken.Game
 
+  def start_link(%Game{} = game_state) do
+    GenServer.start_link(Server, game_state)
+  end
+
   def start_link(number_players) do
     GenServer.start_link(Server, number_players)
+  end
+
+  def init(%Game{} = game_state) do
+    {:ok, game_state}
   end
 
   def init(number_players) do

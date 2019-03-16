@@ -3,6 +3,8 @@ defmodule Schocken do
   Documentation for Schocken.
   """
 
+  alias Schocken.Game
+
   @doc """
   Starting a new supervisor and returning the pid
   """
@@ -11,6 +13,20 @@ defmodule Schocken do
       DynamicSupervisor.start_child(
         Schocken.DynamicSupervisor,
         {Schocken.Server, number_players}
+      )
+
+    pid
+  end
+
+  @doc """
+  Starting a new game from known game status
+  """
+  def new_game(%{} = game_state) do
+    game_state = struct(Game, game_state)
+    {:ok, pid} =
+      DynamicSupervisor.start_child(
+        Schocken.DynamicSupervisor,
+        {Schocken.Server, game_state}
       )
 
     pid

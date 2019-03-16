@@ -14,8 +14,12 @@ defmodule SchockenTest do
     assert status.current_player.name == "player_5"
   end
 
-  test "make move", context do
+  test "dice all", context do
     game = context.game
-    #Schocken.make_move(game, )
+    status = Schocken.status(game)
+    |> IO.inspect(label: "before")
+    Schocken.make_move(game, :all)
+    |> IO.inspect(label: "after")
+    status = Schocken.status(game)
   end
 end
