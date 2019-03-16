@@ -18,14 +18,14 @@ defmodule Schocken.Server do
     {:reply, status_reply(game), game}
   end
 
-  def handle_call({:make_move, action, params}, _from, game) do
-    game = Game.make_move(game, action, params)
+  def handle_call({:make_move, choiches}, _from, game) do
+    game = Game.make_move(game, choiches)
     {:reply, status_reply(game), game}
   end
 
   defp status_reply(game) do
     %{
-      current_player: List.first(game.active_players),
+      current_player: List.first(game.players),
       global_coaster: game.global_coaster,
       tries: game.tries,
       current_state: game.current_state

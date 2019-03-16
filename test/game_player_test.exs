@@ -10,12 +10,14 @@ defmodule Schocken.Game.PlayerTest do
 
   test "create new player", context do
     player = context.player
+
     result = %Player{
       name: "Jannik",
       current_toss: nil,
       num_coaster: 0,
       lost_half: false
     }
+
     assert player == Map.put(result, :current_toss, player.current_toss)
   end
 

@@ -9,8 +9,13 @@ defmodule SchockenTest do
 
   test "finish move", context do
     game = context.game
-    Schocken.make_move(game, :finish)
+    Schocken.make_move(game, [])
     status = Schocken.status(game)
     assert status.current_player.name == "player_5"
+  end
+
+  test "make move", context do
+    game = context.game
+    #Schocken.make_move(game, )
   end
 end

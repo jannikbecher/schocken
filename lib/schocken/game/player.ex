@@ -8,24 +8,26 @@ defmodule Schocken.Game.Player do
     name: "",
     current_toss: %{dices: nil, one_toss: nil, tries: 0, score: nil},
     num_coaster: 0,
+    state: :ready,
     lost_half: false
   )
 
   @type t :: %Player{
-    name: String.t,
-    current_toss: current_toss,
-    num_coaster: integer,
-    lost_half: boolean
-  }
+          name: String.t(),
+          current_toss: current_toss,
+          num_coaster: integer,
+          state: :ready | :finished | :out,
+          lost_half: boolean
+        }
   @type dice :: 1..6
   @type tries :: 0..3
   @type score :: {integer, integer, integer}
   @type current_toss :: %{
-    dices: [dice],
-    one_toss: boolean,
-    tries: tries,
-    score: score
-  }
+          dices: [dice],
+          one_toss: boolean,
+          tries: tries,
+          score: score
+        }
 
   @doc """
   Returns a new player struct
@@ -48,7 +50,24 @@ defmodule Schocken.Game.Player do
       |> do_roll_dices(choices)
       |> update_tries()
       |> Ranking.evaluate()
+
     %Player{player | current_toss: current_toss}
+  end
+
+  @doc """
+  update the coaster of the player. +for add -for substract
+  """
+  @spec update_coaster(t, integer) :: {:ok | :out, t}
+  def update_coaster(player = %Player{num_coaster: num_coaster}, number) do
+    new_value = num_coaster + number
+
+    cond do
+      new_value > 0 ->
+        %Player{player | num_coaster: new_value}
+
+      true ->
+        %Player{player | num_coaster: 0}
+    end
   end
 
   @spec do_roll_dices(current_toss, List | :all | 1..6) :: current_toss

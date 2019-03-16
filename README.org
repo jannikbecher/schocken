@@ -64,7 +64,7 @@
      whether there are still coasters in the global_coaster stack (:pre)
      or the finale (:post)
    
-    
+     
 * API
 game = new_game(number_players, rules)
 {game, possible_actions} = make_move(game, player, action)
@@ -73,3 +73,20 @@ game = new_game(number_players, rules)
 * Actions
 ** roll_dices
 ** finish_move
+   
+* State control
+#+begin_src plantuml :file state_digram.png
+  @startuml
+  new_round
+  State1 --> [*]
+  State1 : this is a string
+  State1 : this is another string
+
+  State1 -> State2
+  State2 --> [*]
+  @enduml
+#+end_src
+
+#+RESULTS:
+[[file:state_digram.png]]
+
