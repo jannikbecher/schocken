@@ -25,7 +25,7 @@ defmodule Schocken.Game do
   Returns a new game state
   """
   @spec new(integer) :: t
-  def new(number_players) do
+  def new(number_players) when is_integer(number_players) do
     players =
       Enum.reduce(1..number_players, [], fn id, players ->
         [Player.new("player_" <> to_string(id)) | players]
