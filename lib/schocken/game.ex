@@ -11,11 +11,11 @@ defmodule Schocken.Game do
     players: [],
     global_coaster: 13,
     tries: 3,
-    current_state: %{round: :first, phase: :pre}
+    current_state: :first_half
   )
 
   @type t :: %Game{
-          players: [Player.t],
+          players: [Player.t()],
           global_coaster: 0..13,
           tries: 1..3,
           current_state: :first_half | :second_half | :finale
@@ -54,6 +54,7 @@ defmodule Schocken.Game do
   def make_move(%Game{players: [player, %Player{state: :finished} | _] = players} = game, []) do
     player = %Player{player | state: :finished}
     [_ | rest] = players
+
     %Game{game | players: rest ++ [player]}
     |> calculate_round()
   end
@@ -108,7 +109,7 @@ defmodule Schocken.Game do
     game
     |> update_players_coaster(best_player, worst_player, number_of_coasters)
     |> update_players_state()
-    |> update_game_state()
+    |> update_game_state(worst_player)
     |> init_new_round(elem(worst_player, 1))
   end
 
@@ -180,24 +181,42 @@ defmodule Schocken.Game do
     %Game{game | players: players}
   end
 
-  defp update_game_state(%Game{} = game) do
+  defp update_game_state(%Game{} = game, worst_player) do
     # only one player left
-    state =
-      if Enum.count(game.players, &(&1.state == :ready)) == 1 do
-        if Enum.count(game.players(&(&1.lost_half == true))) == 1 do
-          :finale
-        else
-          :second_round
-        end
+    if Enum.count(game.players, &(&1.num_coaster == 13)) == 1 do
+      if Enum.count(game.players, &(&1.lost_half == true)) == 1 do
+        update_game_state(game, worst_player, :finale)
+      else
+        update_game_state(game, worst_player, :second_round)
       end
+    end
+  end
 
-    %Game{game | current_state: state}
+  defp update_game_state(%Game{} = game, {_, index}, :finale) do
+    players =
+      game.players
+      |> Enum.update_at(index, &(%Player{&1 | lost_half: true}))
+      |> Enum.map(fn player ->
+        if player.lost_half == true do
+          Map.put(player, :state, :ready)
+          Map.put(player, :num_coaster, 0)
+        end
+      end)
+    %Game{game | players: players, global_coaster: 13, current_state: :second_round}
+  end
+
+  defp update_game_state(%Game{} = game, {_, index}, :second_round) do
+    players =
+      game.players
+      |> Enum.update_at(index, &(%Player{&1 | lost_half: true}))
+      |> Enum.map(&Map.put(&1, :state, :ready))
+      |> Enum.map(&Map.put(&1, :num_coaster, 0))
+    %Game{game | players: players, global_coaster: 13, current_state: :second_round}
   end
 
   defp init_new_round(
          %Game{
-           players: players,
-           current_state: :first_half
+           players: players
          } = game,
          lost_player_index
        ) do

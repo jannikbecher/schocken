@@ -47,8 +47,10 @@ defmodule Schocken.Game.Ranking do
     {worst_player, index_worst}
   end
 
-  @spec calc_amount_of_coasters(Player.score()) :: integer
-  defp calc_amount_of_coasters(score) do
+  @spec calc_amount_of_coasters(Player) :: integer
+  defp calc_amount_of_coasters(player) do
+    score = player.current_toss.score
+
     case score do
       {5, _, _} -> {:schock_out, 0}
       {4, number, _} -> {:schock, number}

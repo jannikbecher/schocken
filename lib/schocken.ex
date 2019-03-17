@@ -10,9 +10,10 @@ defmodule Schocken do
   Starting a new game from known game status
   """
   def new_game(%{} = game_state) do
-    players =  Enum.map(game_state.players, &struct(Player, &1))
+    players = Enum.map(game_state.players, &struct(Player, &1))
     game_state = Map.put(game_state, :players, players)
     game_state = struct(Game, game_state)
+
     {:ok, pid} =
       DynamicSupervisor.start_child(
         Schocken.DynamicSupervisor,
