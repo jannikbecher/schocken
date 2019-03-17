@@ -44,7 +44,7 @@ defmodule Schocken.Game.Player do
   return updated player
   """
   @spec roll_dices(Player, List | :all | 1..6) :: Player
-  def roll_dices(player = %Player{current_toss: current_toss}, choices) do
+  def roll_dices(%Player{current_toss: current_toss} = player, choices) do
     current_toss =
       current_toss
       |> do_roll_dices(choices)
@@ -58,7 +58,7 @@ defmodule Schocken.Game.Player do
   update the coaster of the player. +for add -for substract
   """
   @spec update_coaster(t, integer) :: {:ok | :out, t}
-  def update_coaster(player = %Player{num_coaster: num_coaster}, number) do
+  def update_coaster(%Player{num_coaster: num_coaster} = player, number) do
     new_value = num_coaster + number
 
     cond do

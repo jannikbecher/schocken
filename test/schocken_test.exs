@@ -38,13 +38,12 @@ defmodule SchockenTest do
   end
 
   test "dice all", context do
-    game =
-      context.game
-      |> Schocken.make_move(2)
-      |> Schocken.make_move([1, 3])
-      |> Schocken.make_move([])
-      |> Schocken.make_move([2, 2])
-      |> Schocken.make_move(3)
-      |> Schocken.make_move([])
+    game = context.game
+    Schocken.make_move(game, 2)
+    Schocken.make_move(game, :all)
+    Schocken.make_move(game, [])
+    Schocken.make_move(game, [2, 2])
+    Schocken.make_move(game, 3)
+    Schocken.make_move(game, [])
   end
 end
