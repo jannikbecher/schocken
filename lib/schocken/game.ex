@@ -213,44 +213,24 @@ defmodule Schocken.Game do
       |> List.update_at(index, &%Player{&1 | lost_half: true})
       |> Enum.map(fn player ->
         if player.lost_half == true do
-          Map.put(player, :state, :ready)
-          Map.put(player, :num_coaster, 0)
+          player
+          |> Map.put(:state, :ready)
+          |> Map.put(:num_coaster, 0)
         end
       end)
 
-    %Game{game | players: players, global_coaster: 13}
+    %Game{game | players: players, global_coaster: 13, current_state: :finale}
   end
 
   # update game state for second_half
   defp update_game_state(%Game{} = game, {_, index}, :second_half) do
     players =
       game.players
-    %Game{
-      players: [
-        %Player{
-          name: "player_1",
-          current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
-          num_coaster: 0,
-          state: :ready,
-          lost_half: false
-        },
-        %Player{
-          name: "player_2",
-          current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
-          num_coaster: 0,
-          state: :ready,
-          lost_half: false
-        }
-      ],
-      global_coaster: 13,
-      tries: 0,
-      current_state: :first_half
-    }
       |> List.update_at(index, &%Player{&1 | lost_half: true})
       |> Enum.map(&Map.put(&1, :state, :ready))
       |> Enum.map(&Map.put(&1, :num_coaster, 0))
 
-    %Game{game | players: players, global_coaster: 13, current_state: :second_round}
+    %Game{game | players: players, global_coaster: 13, current_state: :second_half}
   end
 
   defp init_new_round(
