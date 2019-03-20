@@ -9,14 +9,14 @@ defmodule Schocken.GameTest do
       players: [
         %Player{
           name: "player_1",
-          current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+          current_toss: %{dices: [1, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
           num_coaster: 0,
           state: :ready,
           lost_half: false
         },
         %Player{
           name: "player_2",
-          current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+          current_toss: %{dices: [2, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
           num_coaster: 0,
           state: :ready,
           lost_half: false
@@ -36,14 +36,14 @@ defmodule Schocken.GameTest do
       players: [
         %Player{
           name: "player_1",
-          current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+          current_toss: %{dices: [1, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
           num_coaster: 2,
           state: :ready,
           lost_half: false
         },
         %Player{
           name: "player_2",
-          current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+          current_toss: %{dices: [2, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
           num_coaster: 11,
           state: :ready,
           lost_half: false
@@ -65,14 +65,14 @@ defmodule Schocken.GameTest do
         players: [
           %Player{
             name: "player_1",
-            current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+            current_toss: %{dices: [1, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
             num_coaster: 2,
             state: :ready,
             lost_half: true
           },
           %Player{
             name: "player_2",
-            current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+            current_toss: %{dices: [2, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
             num_coaster: 11,
             state: :ready,
             lost_half: false
@@ -95,14 +95,14 @@ defmodule Schocken.GameTest do
         players: [
           %Player{
             name: "player_1",
-            current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+            current_toss: %{dices: [1, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
             num_coaster: 2,
             state: :ready,
             lost_half: true
           },
           %Player{
             name: "player_2",
-            current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+            current_toss: %{dices: [2, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
             num_coaster: 11,
             state: :ready,
             lost_half: true
@@ -122,14 +122,14 @@ defmodule Schocken.GameTest do
         players: [
           %Player{
             name: "player_1",
-            current_toss: %{dices: [1, 1, 1], one_toss: true, tries: 1, score: {5, 0, 1}},
+            current_toss: %{dices: [1, 1, 1], one_toss: true, promote: :zero, tries: 1, score: {5, 0, 1}},
             num_coaster: 2,
             state: :ready,
             lost_half: true
           },
           %Player{
             name: "player_2",
-            current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+            current_toss: %{dices: [2, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
             num_coaster: 6,
             state: :ready,
             lost_half: false
@@ -156,6 +156,7 @@ defmodule Schocken.GameTest do
             current_toss: %{
               dices: [1, 6, 6],
               one_toss: true,
+              promote: :one,
               score: {1, 661, 1},
               tries: 1
             },
@@ -168,6 +169,7 @@ defmodule Schocken.GameTest do
             current_toss: %{
               dices: [5, 1, 6],
               one_toss: true,
+              promote: :zero,
               score: {1, 651, 1},
               tries: 1
             },
@@ -180,6 +182,7 @@ defmodule Schocken.GameTest do
             current_toss: %{
               dices: [4, 2, 3],
               one_toss: true,
+              promote: :zero,
               score: {2, 4, 1},
               tries: 1
             },

@@ -8,7 +8,7 @@ defmodule SchockenTest do
         players: [
           %{
             name: "player_1",
-            current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+            current_toss: %{dices: [1, 2, 3], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
             num_coaster: 0,
             state: :ready,
             lost_half: false
