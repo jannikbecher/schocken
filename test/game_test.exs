@@ -84,10 +84,116 @@ defmodule Schocken.GameTest do
       }
       |> Game.make_move([])
       |> Game.make_move([])
-      |> IO.inspect()
     assert List.first(game.players).lost_half == true
     assert game.current_state == :finale
   end
 
-  alias Schocken.Game
+  # TODO: what should happen after a game finished?
+  test "game end" do
+    game =
+      %Game{
+        players: [
+          %Player{
+            name: "player_1",
+            current_toss: %{dices: [1, 2, 3], one_toss: true, tries: 1, score: {2, 3, 1}},
+            num_coaster: 2,
+            state: :ready,
+            lost_half: true
+          },
+          %Player{
+            name: "player_2",
+            current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+            num_coaster: 11,
+            state: :ready,
+            lost_half: true
+          }
+        ],
+        global_coaster: 0,
+        tries: 0,
+        current_state: :finale
+      }
+      |> Game.make_move([])
+      |> Game.make_move([])
+  end
+
+  test "shockout" do
+    game =
+      %Game{
+        players: [
+          %Player{
+            name: "player_1",
+            current_toss: %{dices: [1, 1, 1], one_toss: true, tries: 1, score: {5, 0, 1}},
+            num_coaster: 2,
+            state: :ready,
+            lost_half: true
+          },
+          %Player{
+            name: "player_2",
+            current_toss: %{dices: [2, 2, 3], one_toss: true, tries: 1, score: {1, 322, 1}},
+            num_coaster: 6,
+            state: :ready,
+            lost_half: false
+          }
+        ],
+        global_coaster: 5,
+        tries: 0,
+        current_state: :second_half
+      }
+      |> Game.make_move([])
+      |> Game.make_move([])
+    assert game.current_state == :finale
+    assert List.first(game.players).num_coaster == 0
+    assert List.first(game.players).state == :ready
+  end
+
+  test "more than two players, kicking player out" do
+    game =
+      %Game{
+        current_state: :second_half,
+        global_coaster: 0,
+        players: [
+          %Player{
+            current_toss: %{
+              dices: [1, 6, 6],
+              one_toss: true,
+              score: {1, 661, 1},
+              tries: 1
+            },
+            lost_half: false,
+            name: "player_2",
+            num_coaster: 10,
+            state: :ready
+          },
+          %Player{
+            current_toss: %{
+              dices: [5, 1, 6],
+              one_toss: true,
+              score: {1, 651, 1},
+              tries: 1
+            },
+            lost_half: false,
+            name: "player_3",
+            num_coaster: 0,
+            state: :out
+          },
+          %Player{
+            current_toss: %{
+              dices: [4, 2, 3],
+              one_toss: true,
+              score: {2, 4, 1},
+              tries: 1
+            },
+            lost_half: false,
+            name: "player_1",
+            num_coaster: 3,
+            state: :ready
+          }
+        ],
+        tries: 3
+      }
+      |> Game.make_move([])
+      |> Game.make_move([])
+      |> IO.inspect
+    assert List.first(game.players).num_coaster == 12
+  end
 end

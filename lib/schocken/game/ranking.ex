@@ -28,6 +28,7 @@ defmodule Schocken.Game.Ranking do
   def highest_toss(players) do
     best_player =
       players
+      |> Enum.filter(&(&1.state != :out))
       |> Enum.max_by(fn player -> player.current_toss.score end)
 
     index_best = Enum.find_index(players, fn player -> player.name == best_player.name end)
@@ -39,9 +40,9 @@ defmodule Schocken.Game.Ranking do
   @spec lowest_toss([Player.t()]) :: {Player.t(), integer}
   def lowest_toss(players) do
     worst_player =
-      Enum.min_by(players, fn player ->
-        player.current_toss.score
-      end)
+    players
+    |> Enum.filter(&(&1.state != :out))
+    |> Enum.min_by(fn player -> player.current_toss.score end)
 
     index_worst = Enum.find_index(players, fn player -> player.name == worst_player.name end)
     {worst_player, index_worst}

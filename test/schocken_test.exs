@@ -30,20 +30,17 @@ defmodule SchockenTest do
     {:ok, game: game}
   end
 
-  test "finish move", context do
+  test "resume already started game", context do
     game = context.game
     Schocken.make_move(game, [])
     status = Schocken.status(game)
     assert status.current_player.name == "player_2"
   end
 
-  test "dice all", context do
-    game = context.game
-    Schocken.make_move(game, 2)
+  test "normal game", context do
+    game = Schocken.new_game(3)
     Schocken.make_move(game, :all)
     Schocken.make_move(game, [])
-    Schocken.make_move(game, [2, 2])
-    Schocken.make_move(game, 3)
     Schocken.make_move(game, [])
   end
 end

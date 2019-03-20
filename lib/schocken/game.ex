@@ -41,32 +41,32 @@ defmodule Schocken.Game do
   :toss to toss selcted dices
   """
   @spec make_move(t, List | integer | atom) :: t
-  def make_move(game, choices)
+  def make_move(game, choices) do
+    case last_player?(game.players) do
+      true -> do_make_last_move(game, choices)
+      false -> do_make_move(game, choices)
+    end
+  end
 
   # Game is over
-  def make_move(
-        %Game{players: [_player, %Player{state: :finished} | _rest], current_state: :finale},
-        []
-      ) do
+  defp do_make_last_move(%Game{current_state: :finale} = game, []) do
   end
 
   # Round is over
-  def make_move(%Game{players: [player, %Player{state: :finished} | _] = players} = game, []) do
+  defp do_make_last_move(%Game{players: [player | rest]} = game, []) do
     player = %Player{player | state: :finished}
-    [_ | rest] = players
-
     %Game{game | players: rest ++ [player]}
     |> calculate_round()
   end
 
   # Next players turn
-  def make_move(%Game{players: [player | rest]} = game, []) do
+  defp do_make_move(%Game{players: [player | rest]} = game, []) do
     player = %Player{player | state: :finished}
     next_player(%Game{game | players: [player] ++ rest})
   end
 
   # Roll dices
-  def make_move(%Game{players: [active_player | rest_players]} = game, choices) do
+  defp do_make_move(%Game{players: [active_player | rest_players]} = game, choices) do
     %Game{game | players: [Player.roll_dices(active_player, choices) | rest_players]}
   end
 
@@ -89,14 +89,15 @@ defmodule Schocken.Game do
   end
 
   defp schock_out_arrange_coasters(%Game{players: players} = game, {lost_player, index}) do
-    players
-    |> Enum.map(fn player ->
-      if player.name == lost_player.name do
-        Map.put(player, :num_coaster, 13)
-      else
-        Map.put(player, :num_coaster, 0)
-      end
-    end)
+    players = 
+      players
+      |> Enum.map(fn player ->
+        if player.name == lost_player.name do
+          Map.put(player, :num_coaster, 13)
+        else
+          Map.put(player, :num_coaster, 0)
+        end
+      end)
 
     %Game{game | players: players}
   end
@@ -203,6 +204,8 @@ defmodule Schocken.Game do
       else
         update_game_state(game, worst_player, :second_half)
       end
+    else
+      game
     end
   end
 
@@ -216,6 +219,8 @@ defmodule Schocken.Game do
           player
           |> Map.put(:state, :ready)
           |> Map.put(:num_coaster, 0)
+        else
+          player
         end
       end)
 
@@ -240,12 +245,19 @@ defmodule Schocken.Game do
          lost_player_index
        ) do
     {head, tail} = Enum.split(players, lost_player_index)
-    players = (tail ++ head) |> Enum.map(&Player.roll_dices(&1, :all))
+    players =
+      tail ++ head
+      |> Enum.map(&(put_in(&1.current_toss.tries, 0)))
+      |> Enum.map(&Player.roll_dices(&1, :all))
     %Game{game | players: players}
   end
 
-  defp next_player(game) do
+  defp next_player(%Game{} = game) do
     %Game{game | players: skip_players(game.players)}
+  end
+
+  defp last_player?(players) when is_list(players) do
+    Enum.count(players, &(&1.state == :ready)) == 1
   end
 
   defp skip_players([%Player{state: :ready} = player | rest]), do: [player] ++ rest
