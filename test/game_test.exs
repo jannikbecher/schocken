@@ -196,7 +196,61 @@ defmodule Schocken.GameTest do
       }
       |> Game.make_move([])
       |> Game.make_move([])
-      |> IO.inspect
     assert List.first(game.players).num_coaster == 12
+  end
+
+  test "ending game" do
+    game =
+      %Game{
+        current_state: :finale,
+        global_coaster: 0,
+        players: [
+          %Player{
+            current_toss: %{
+              dices: [1, 6, 6],
+              one_toss: true,
+              promote: :one,
+              score: {1, 661, 1},
+              tries: 1
+            },
+            lost_half: true,
+            name: "player_2",
+            num_coaster: 10,
+            state: :ready
+          },
+          %Player{
+            current_toss: %{
+              dices: [5, 1, 6],
+              one_toss: true,
+              promote: :zero,
+              score: {1, 651, 1},
+              tries: 1
+            },
+            lost_half: false,
+            name: "player_3",
+            num_coaster: 0,
+            state: :out
+          },
+          %Player{
+            current_toss: %{
+              dices: [1, 1, 3],
+              one_toss: true,
+              promote: :zero,
+              score: {4, 3, 1},
+              tries: 1
+            },
+            lost_half: true,
+            name: "player_1",
+            num_coaster: 3,
+            state: :ready
+          }
+        ],
+        tries: 3
+      }
+      |> Game.make_move([])
+      |> Game.make_move([])
+      |> Game.make_move([])
+      |> Game.make_move([])
+    assert game.current_state == :over
   end
 end

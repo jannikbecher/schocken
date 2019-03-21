@@ -11,14 +11,16 @@ defmodule Schocken.Game do
     players: [],
     global_coaster: 13,
     tries: 3,
-    current_state: :first_half
+    current_state: :first_half,
+    lost_player: ""
   )
 
   @type t :: %Game{
           players: [Player.t()],
           global_coaster: 0..13,
           tries: 1..3,
-          current_state: :first_half | :second_half | :finale
+          current_state: :first_half | :second_half | :finale | :over,
+          lost_player: String.t
         }
 
   @doc """
@@ -41,15 +43,15 @@ defmodule Schocken.Game do
   :toss to toss selcted dices
   """
   @spec make_move(t, List | integer | atom) :: t
-  def make_move(game, choices) do
+  def make_move(%Game{current_state: current_state} = game, choices) when current_state != :over do
     case last_player?(game.players) do
       true -> do_make_last_move(game, choices)
       false -> do_make_move(game, choices)
     end
   end
 
-  # Game is over
-  defp do_make_last_move(%Game{current_state: :finale} = game, []) do
+  def make_move(%Game{current_state: :over} = game, _choices) do
+    game
   end
 
   # Round is over
@@ -199,10 +201,14 @@ defmodule Schocken.Game do
   defp update_game_state(%Game{} = game, worst_player) do
     # only one player left
     if Enum.count(game.players, &(&1.num_coaster == 13)) == 1 do
-      if Enum.count(game.players, &(&1.lost_half == true)) == 1 do
-        update_game_state(game, worst_player, :finale)
-      else
-        update_game_state(game, worst_player, :second_half)
+      case Enum.count(game.players, &(&1.lost_half)) do
+        2 ->
+          %Game{game | current_state: :over, lost_player: elem(worst_player, 0).name}
+        1 ->
+          update_game_state(game, worst_player, :finale)
+        _  ->
+          update_game_state(game, worst_player, :second_half)
+
       end
     else
       game
@@ -236,6 +242,11 @@ defmodule Schocken.Game do
       |> Enum.map(&Map.put(&1, :num_coaster, 0))
 
     %Game{game | players: players, global_coaster: 13, current_state: :second_half}
+  end
+
+  # do nothing when the game is over
+  defp init_new_round(%Game{current_state: :over} = game, _lost_player_index) do
+    game
   end
 
   defp init_new_round(
