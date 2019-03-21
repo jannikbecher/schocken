@@ -32,7 +32,6 @@ defmodule Schocken do
         Schocken.DynamicSupervisor,
         {Schocken.Server, number_players}
       )
-
     pid
   end
 

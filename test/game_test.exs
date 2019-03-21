@@ -88,14 +88,14 @@ defmodule Schocken.GameTest do
     assert game.current_state == :finale
   end
 
-  # TODO: what should happen after a game finished?
-  test "game end" do
+  test "global_tries" do
     game =
       %Game{
         players: [
           %Player{
             name: "player_1",
-            current_toss: %{dices: [1, 2, 3], dices_out: [], one_toss: true, promote: :zero, tries: 1, score: {2, 3, 1}},
+            current_toss: %{dices: [1, 2, 3], dices_out: [], one_toss: true, promote: :zero, tries: 2, score: {2, 3, 1}},
+            first_player: true,
             num_coaster: 2,
             state: :ready,
             lost_half: true
@@ -103,17 +103,20 @@ defmodule Schocken.GameTest do
           %Player{
             name: "player_2",
             current_toss: %{dices: [2, 2, 3], dices_out: [], one_toss: true, promote: :zero, tries: 1, score: {1, 322, 1}},
-            num_coaster: 11,
+            first_player: false,
+            num_coaster: 3,
             state: :ready,
             lost_half: true
           }
         ],
-        global_coaster: 0,
+        global_coaster: 8,
         global_tries: 0,
         current_state: :finale
       }
       |> Game.make_move([])
-      |> Game.make_move([])
+    assert game.global_tries == 2
+    game = Game.make_move(game, [])
+    assert List.first(game.players).first_player == true
   end
 
   test "shockout" do

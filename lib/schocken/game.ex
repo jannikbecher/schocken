@@ -31,8 +31,10 @@ defmodule Schocken.Game do
     players =
       Enum.reduce(1..number_players, [], fn id, players ->
         player = Player.new("player_" <> to_string(id))
-        if id == 1 do
+        player = if id == 1 do
           %Player{player | first_player: true}
+        else
+          player
         end
         [player | players]
       end)
@@ -47,9 +49,10 @@ defmodule Schocken.Game do
   """
   @spec make_move(t, List | integer | atom) :: t
   def make_move(%Game{current_state: current_state} = game, choices) when current_state != :over do
-    case last_player?(game.players) do
-      true -> do_make_last_move(game, choices)
-      false -> do_make_move(game, choices)
+    if last_player?(game.players) and choices == [] do
+      do_make_last_move(game, choices)
+    else
+      do_make_move(game, choices)
     end
   end
 
