@@ -35,8 +35,21 @@ defmodule Schocken.Server do
     %{
       current_player: List.first(game.players),
       global_coaster: game.global_coaster,
-      tries: game.tries,
-      current_state: game.current_state
+      tries: game.global_tries,
+      current_state: game.current_state,
+      other_players: get_already_moved(game)
     }
+  end
+
+  defp get_valid_moves(game) do
+    IO.puts("hello")
+  end
+
+  defp get_already_moved(%Game{players: players} = game) do
+    players
+    |> Enum.filter(&(&1.state == :finished))
+    |> Enum.map(fn player ->
+      %{name: player.name, global_tries: player.current_toss.tries, dices: player.current_toss.dices_out}
+    end)
   end
 end

@@ -6,7 +6,14 @@ defmodule Schocken.Game.Player do
 
   defstruct(
     name: "",
-    current_toss: %{dices: nil, one_toss: nil, promote: :zero, tries: 0, score: nil},
+    current_toss: %{dices: nil,
+                    dices_out: nil,
+                    one_toss: nil,
+                    promote: :zero,
+                    tries: 0,
+                    score: nil
+    },
+    first_player: false,
     num_coaster: 0,
     state: :ready,
     lost_half: false
@@ -15,6 +22,7 @@ defmodule Schocken.Game.Player do
   @type t :: %Player{
           name: String.t(),
           current_toss: current_toss,
+          first_player: boolean,
           num_coaster: integer,
           state: :ready | :finished | :out,
           lost_half: boolean
@@ -24,6 +32,7 @@ defmodule Schocken.Game.Player do
   @type score :: {integer, integer, integer}
   @type current_toss :: %{
           dices: [dice],
+          dices_out: [dice],
           one_toss: boolean,
           promote: :zero | :one | :two,
           tries: tries,
@@ -48,6 +57,7 @@ defmodule Schocken.Game.Player do
   def roll_dices(%Player{current_toss: current_toss} = player, choices) do
     current_toss =
       current_toss
+      |> update_dices_out(choices)
       |> do_roll_dices(choices)
       |> update_tries()
       |> Ranking.evaluate()
@@ -69,6 +79,17 @@ defmodule Schocken.Game.Player do
       true ->
         %Player{player | num_coaster: 0}
     end
+  end
+
+  @spec update_dices_out(current_toss, [dice]) :: current_toss
+  defp update_dices_out(current_toss, choices) do
+    dices = current_toss.dices
+    dices_out = cond do
+      is_number(choices) -> dices -- [choices]
+      is_list(choices) -> dices -- choices
+      true -> []
+    end
+    %{current_toss | dices_out: dices_out}
   end
 
   @spec do_roll_dices(current_toss, List | :all | 1..6) :: current_toss

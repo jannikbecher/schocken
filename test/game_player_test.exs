@@ -42,4 +42,17 @@ defmodule Schocken.Game.PlayerTest do
     new_player = Player.roll_dices(player, choices)
     assert player != new_player
   end
+
+  test "dices out" do
+    player = %Player{
+      name: "player_1",
+      current_toss: %{dices: [1, 2, 3], dices_out: [1, 2, 3], one_toss: false, promote: :zero, tries: 1, score: {2, 3, 1}},
+      num_coaster: 2,
+      state: :ready,
+      lost_half: false
+    }
+    |> Player.roll_dices([2, 3])
+
+    assert player.current_toss.dices_out == [1]
+  end
 end

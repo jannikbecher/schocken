@@ -10,7 +10,7 @@ defmodule Schocken.Game do
   defstruct(
     players: [],
     global_coaster: 13,
-    tries: 3,
+    global_tries: 0,
     current_state: :first_half,
     lost_player: ""
   )
@@ -18,7 +18,7 @@ defmodule Schocken.Game do
   @type t :: %Game{
           players: [Player.t()],
           global_coaster: 0..13,
-          tries: 1..3,
+          global_tries: 0..3,
           current_state: :first_half | :second_half | :finale | :over,
           lost_player: String.t
         }
@@ -30,10 +30,13 @@ defmodule Schocken.Game do
   def new(number_players) when is_integer(number_players) do
     players =
       Enum.reduce(1..number_players, [], fn id, players ->
-        [Player.new("player_" <> to_string(id)) | players]
+        player = Player.new("player_" <> to_string(id))
+        if id == 1 do
+          %Player{player | first_player: true}
+        end
+        [player | players]
       end)
-
-    %Game{players: players}
+    %Game{players: Enum.reverse(players)}
   end
 
   @doc """
@@ -63,6 +66,11 @@ defmodule Schocken.Game do
 
   # Next players turn
   defp do_make_move(%Game{players: [player | rest]} = game, []) do
+    game = if player.first_player do
+      %Game{game | global_tries: player.current_toss.tries}
+    else
+      game
+    end
     player = %Player{player | state: :finished}
     next_player(%Game{game | players: [player] ++ rest})
   end
@@ -255,12 +263,23 @@ defmodule Schocken.Game do
          } = game,
          lost_player_index
        ) do
-    {head, tail} = Enum.split(players, lost_player_index)
     players =
-      tail ++ head
+      players
+      |> update_first_player(lost_player_index)
       |> Enum.map(&(put_in(&1.current_toss.tries, 0)))
       |> Enum.map(&Player.roll_dices(&1, :all))
     %Game{game | players: players}
+  end
+
+  defp update_first_player(players, 0), do: players
+
+  defp update_first_player(players, lost_player_index) do
+    {head, tail} = Enum.split(players, lost_player_index)
+    [first_player | rest] = head
+    head = [%Player{first_player | first_player: false} | rest]
+    [new_first_player | rest] = tail
+    tail = [%Player{new_first_player | first_player: true} | rest]
+    tail ++ head
   end
 
   defp next_player(%Game{} = game) do
